@@ -1,29 +1,35 @@
+# wine_svm_pipeline.py
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
+from sklearn.metrics import accuracy_score
 import joblib
 
 # Load dataset
-data = load_wine()
-X = data.data
-y = data.target
+wine = load_wine()
+X, y = wine.data, wine.target
 
-# Scale features
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-# Train-test split
+# Split data
 X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled, y, test_size=0.3, random_state=42
+    X, y, test_size=0.2, random_state=42
 )
 
-# Train SVM (best performing model usually)
-svm = SVC(kernel='rbf', C=1.0, gamma='scale')
-svm.fit(X_train, y_train)
+# Build pipeline (scaler + linear SVM)
+model = make_pipeline(
+    StandardScaler(),
+    LinearSVC(C=1, random_state=42, max_iter=10000)
+)
 
-# Save model & scaler
-joblib.dump(svm, "best_svm.pkl")
-joblib.dump(scaler, "scaler.pkl")
+# Train model
+model.fit(X_train, y_train)
 
-print("✅ Model and scaler saved successfully")
+# Evaluate
+preds = model.predict(X_test)
+print(f"Accuracy on test set: {accuracy_score(y_test, preds):.4f}")
+
+# Save pipeline (single file)
+joblib.dump(model, "wine_svm_pipeline.pkl")
+
+print("Pipeline with scaler + LinearSVC saved!")

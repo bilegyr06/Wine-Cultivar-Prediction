@@ -2,131 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>🍷 Wine Cultivar Prediction</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f8f9fa, #eef2f7);
-            margin: 0;
-            padding: 0;
-            color: #222;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            padding: 40px 20px;
-        }
-
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
-
-        p.subtitle {
-            color: #555;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-        }
-
-        input {
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 0.95rem;
-            width: 100%;
-        }
-
-        button {
-            background: #6f42c1;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        button:hover {
-            background: #59339d;
-        }
-
-        img {
-            width: 100%;
-            border-radius: 12px;
-            margin-top: 15px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #666;
-            font-size: 0.85rem;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Cultivar Prediction</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
-<div class="container">
+    <div class="container">
+        <h1>Wine Cultivar Classification</h1>
+        <p class="subtitle" style="text-align: center; color: var(--text-light); margin-bottom: 40px;">
+            A machine learning web app for predicting wine cultivar origin using chemical composition.
+        </p>
 
-    <h1>🍷 Wine Cultivar Classification</h1>
-    <p class="subtitle">
-        A machine learning web app for predicting wine cultivar origin using chemical composition.
-    </p>
-
-    <!-- INPUT FORM -->
-    <div class="card">
-        <h3>🧪 Enter Wine Features</h3>
-
-        <form method="POST" action="/predict">
-            <div class="grid">
-                {% for feature in features %}
-                    <input type="number" step="any" name="{{ feature }}" placeholder="{{ feature }}" required>
+        {% if errors %}
+        <div class="card" style="background: #fee2e2; border: 1px solid #fecaca;">
+            <h3 style="color: #dc2626;">Please fix the following errors:</h3>
+            <ul style="color: #991b1b; margin: 10px 0;">
+                {% for error in errors %}
+                <li>{{ error }}</li>
                 {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- INPUT FORM -->
+        <div class="card">
+            <h3>🧪 Enter Wine Features</h3>
+            <form method="POST" action="/predict">
+                <div class="grid">
+                    {% for feature in features %}
+                    <div>
+                        <label for="{{ feature }}">{{ feature.replace('_', ' ')|title }}</label>
+                        <input type="number" step="any" name="{{ feature }}" id="{{ feature }}" placeholder="{{ feature.replace('_', ' ')|title }}" required>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit">🔍 Predict Cultivar</button>
+            </form>
+        </div>
+
+        {% if result %}
+        <div class="result card">  <!-- Uses both for shadow + special gradient -->
+            <h3>✅ Prediction Result</h3>
+            <p><strong>Predicted Wine Cultivar:</strong> 🍇 {{ cultivar }}</p>
+            <p style="color: var(--text-light); margin-top: 10px;">
+                The SVM model classified this sample based on the 13 chemical features.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- EDA SECTION -->
+        <div class="card eda-section">
+            <h3>📊 Exploratory Data Analysis</h3>
+            <p style="text-align: center; color: var(--text-light);">
+                Visualizations from the UCI Wine dataset (178 samples, 3 classes)
+            </p>
+            <div class="eda-grid">
+                <div>
+                    <p>Alcohol vs Flavanoids (colored by class)</p>
+                    <img src="{{ eda_scatter }}" alt="Alcohol vs Flavanoids Scatter Plot">
+                </div>
+                <div>
+                    <p>Class Distribution</p>
+                    <img src="{{ class_dist }}" alt="Class Distribution Bar Chart">
+                </div>
             </div>
-            <button type="submit">🔍 Predict Cultivar</button>
-        </form>
+        </div>
+
+        <footer>
+            Built with FastAPI • Scikit-learn • Seaborn • Covenant University CSC415 Project 💜
+        </footer>
     </div>
-
-{% if result %}
-<div class="card">
-    <h3>✅ Prediction Result</h3>
-    <p><strong>Predicted Wine Cultivar:</strong> 🍇 {{ cultivar }}</p>
-</div>
-{% endif %}
-
-
-    <!-- EDA SECTION -->
-    <div class="card">
-        <h3>📊 Exploratory Data Analysis</h3>
-
-        <p>Alcohol vs Flavanoids distribution across classes:</p>
-        <img src="{{ eda_scatter }}" alt="EDA Scatter Plot">
-
-        <p>Target class distribution:</p>
-        <img src="{{ class_dist }}" alt="Class Distribution">
-    </div>
-
-    <footer>
-        Built with Flask • Scikit-learn • Seaborn • 💜
-    </footer>
-
-</div>
 </body>
 </html>

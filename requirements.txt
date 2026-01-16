@@ -1,9 +1,10 @@
+fastapi
+uvicorn[standard]       # ASGI server with reload & workers support
+jinja2                  # Templating engine (for index.html)
+python-multipart        # Required for parsing HTML forms in FastAPI
 numpy
 pandas
 scikit-learn
 joblib
-flask
-gunicorn
 matplotlib
 seaborn
-setuptools

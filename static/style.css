@@ -1,53 +1,193 @@
+/* CSS Variables for easy theming */
+:root {
+    --primary: #6366f1;      /* Indigo-500 – modern, vibrant accent */
+    --primary-dark: #4f46e5;
+    --primary-hover: #4c1d95; /* Deeper purple on hover */
+    --background: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+    --transition: all 0.2s ease-in-out;
+}
+
+/* Modern system font stack */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f6f7fb;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+    background-color: var(--background);
+    color: var(--text);
     margin: 0;
     padding: 0;
+    line-height: 1.6;
 }
 
 .container {
-    max-width: 900px;
-    margin: 40px auto;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    max-width: 1000px;
+    margin: 60px auto;
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
 }
 
-h1, h2 {
+/* Typography */
+h1 {
     text-align: center;
-    color: #333;
+    color: var(--primary);
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+    font-weight: 700;
 }
 
+p.subtitle {
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+h2 {
+    text-align: center;
+    color: var(--text-light);
+    font-weight: 500;
+    margin-bottom: 40px;
+}
+
+/* Form layout – responsive grid */
 form {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-top: 20px;
+    grid-template-columns: repeat(1, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
 }
 
-input {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+/* Label styling (add <label> tags in HTML if not present) */
+label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
 }
 
+input[type="number"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: #ffffff;
+    font-size: 1rem;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Submit button */
 button {
-    grid-column: span 2;
-    padding: 10px;
-    background: #4f46e5;
+    grid-column: 1 / -1;
+    padding: 14px 20px;
+    background: var(--primary);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius);
     cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    margin-top: 10px;
 }
 
 button:hover {
-    background: #3730a3;
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
-img {
-    max-width: 100%;
+button:active {
+    transform: translateY(0);
+}
+
+/* EDA images section */
+.eda-section {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.eda-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
     margin-top: 20px;
-    border-radius: 6px;
+}
+
+.eda-grid img {
+    width: 100%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+.eda-grid img:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Prediction result styling */
+.result {
+    margin-top: 40px;
+    padding: 24px;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    border-radius: var(--radius);
+    text-align: center;
+    border: 1px solid #c7d2fe;
+    box-shadow: var(--shadow-md);
+}
+
+.result h3 {
+    color: var(--primary);
+    font-size: 1.8rem;
+    margin: 0 0 12px 0;
+}
+
+.result p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* General image fallback */
+img:not(.eda-grid img) {
+    max-width: 100%;
+    border-radius: var(--radius);
+    margin-top: 20px;
+    box-shadow: var(--shadow-md);
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #666;
+    font-size: 0.85rem;
 }
