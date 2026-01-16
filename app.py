@@ -13,7 +13,7 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from fastapi import Form, HTTPException
+from fastapi.responses import RedirectResponse
 
 app = FastAPI(title="Wine Cultivar Prediction")
 
@@ -80,6 +80,10 @@ if not os.path.exists(class_dist_path):
 # =====================
 # ROUTES
 # =====================
+@app.get("") 
+async def redirect_root(): 
+    return RedirectResponse(url="/")
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse(
