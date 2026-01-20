@@ -6,6 +6,6 @@ Machine Learning Algorithm Used: RandomForestClassifier
 
 Model persistence method used: Joblib
 
-Live URL of the hosted application:
+Live URL of the hosted application: https://wine-cultivar-prediction-eqnq.onrender.com/
 
 GitHub repository link: https://github.com/bilegyr06/Wine-Cultivar-Prediction
