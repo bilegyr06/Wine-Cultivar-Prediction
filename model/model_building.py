@@ -89,7 +89,7 @@ print("\n--- Classification Report ---")
 print(classification_report(y_test, y_pred, target_names=wine.target_names))
 
 # 7. Save Pipeline
-pipeline_path = "./model/wine_classification_pipeline.pkl"
+pipeline_path = "wine_classification_pipeline.pkl"
 
 print(f"\nSaving pipeline to {pipeline_path}...")
 joblib.dump(pipeline, pipeline_path)

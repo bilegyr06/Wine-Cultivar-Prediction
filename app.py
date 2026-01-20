@@ -24,26 +24,25 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # =====================
-# LOAD MODEL & SCALER
+# LOAD PIPELINE
 # =====================
-MODEL_PATH = 'best_svm.pkl'
-SCALER_PATH = 'scaler.pkl'
+PIPELINE_PATH = './model/wine_classification_pipeline.pkl'
 
-model = joblib.load(MODEL_PATH)
-scaler = joblib.load(SCALER_PATH)
+try:
+    pipeline = joblib.load(PIPELINE_PATH)
+    print(f"Pipeline loaded successfully from {PIPELINE_PATH}")
+except FileNotFoundError:
+    print(f"Error: Pipeline not found at {PIPELINE_PATH}. Please run train_model.py first.")
+    raise
 
-TARGET_NAMES = ['Class 0', 'Class 1', 'Class 2']
-
-FEATURE_NAMES = [
-    'alcohol', 'malic_acid', 'ash', 'alcalinity_of_ash', 'magnesium',
-    'total_phenols', 'flavanoids', 'nonflavanoid_phenols', 'proanthocyanins',
-    'color_intensity', 'hue', 'od280/od315_of_diluted_wines', 'proline'
-]
+# Load wine dataset for target names and feature information
+wine_data = load_wine()
+TARGET_NAMES = wine_data.target_names
+FEATURE_NAMES = list(wine_data.feature_names)
 
 # =====================
 # LOAD DATA FOR EDA
 # =====================
-wine_data = load_wine()
 wine_df = pd.DataFrame(wine_data.data, columns=wine_data.feature_names)
 wine_df['target'] = wine_data.target
 
@@ -71,8 +70,10 @@ if not os.path.exists(eda_scatter_path):
 
 if not os.path.exists(class_dist_path):
     plt.figure(figsize=(5, 4))
-    sns.countplot(x='target', data=wine_df)
+    sns.countplot(x='target', data=wine_df, palette='Set2')
     plt.title('Class Distribution')
+    plt.ylabel('Count')
+    plt.xlabel('Wine Cultivar')
     plt.tight_layout()
     plt.savefig(class_dist_path)
     plt.close()
@@ -80,8 +81,8 @@ if not os.path.exists(class_dist_path):
 # =====================
 # ROUTES
 # =====================
-@app.get("") 
-async def redirect_root(): 
+@app.get("")
+async def redirect_root():
     return RedirectResponse(url="/")
 
 @app.get("/", response_class=HTMLResponse)
@@ -96,10 +97,6 @@ async def index(request: Request):
             "class_dist": "/static/class_distribution.png"
         }
     )
-
-
-
-# ... rest of your imports ...
 
 @app.post("/predict", response_class=HTMLResponse)
 async def predict(request: Request):
@@ -132,9 +129,11 @@ async def predict(request: Request):
         )
 
     try:
-        # If you trained with a pipeline, just call model.predict directly
+        # Use the pipeline for prediction (handles scaling automatically)
         input_array = np.array(input_data).reshape(1, -1)
-        prediction = model.predict(input_array)[0]
+        prediction = pipeline.predict(input_array)[0]
+        prediction_proba = pipeline.predict_proba(input_array)[0]
+        confidence = float(max(prediction_proba)) * 100
         cultivar = TARGET_NAMES[prediction]
     except Exception as e:
         return templates.TemplateResponse(
@@ -156,8 +155,11 @@ async def predict(request: Request):
             "features": FEATURE_NAMES,
             "result": True,
             "cultivar": cultivar,
+            "confidence": f"{confidence:.2f}",
             "eda_scatter": "/static/eda_scatter.png",
-            "class_dist": "/static/class_distribution.png"
+            "class_dist": "/static/class_distribution.png",
+            "feature_importance": "/static/feature_importance.png",
+            "confusion_matrix": "/static/confusion_matrix.png"
         }
     )
 
@@ -166,5 +168,5 @@ async def predict(request: Request):
 # =====================
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000))  # FastAPI commonly uses 8000 locally
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)  # reload=True for dev
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
