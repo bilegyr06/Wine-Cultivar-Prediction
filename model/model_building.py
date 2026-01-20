@@ -4,7 +4,7 @@ import joblib
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import make_pipeline
+from sklearn.model import make_pipeline
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
 import matplotlib.pyplot as plt
@@ -40,8 +40,8 @@ print(f"Training set size: {X_train.shape[0]}")
 print(f"Test set size: {X_test.shape[0]}")
 
 # 4. Build and Train Model using make_pipeline
-print("\n--- Building Pipeline with StandardScaler and Random Forest ---")
-pipeline = make_pipeline(
+print("\n--- Building model with StandardScaler and Random Forest ---")
+model = make_pipeline(
     StandardScaler(),
     RandomForestClassifier(
         n_estimators=100,
@@ -51,12 +51,12 @@ pipeline = make_pipeline(
 )
 
 print("Training model...")
-pipeline.fit(X_train, y_train)
+model.fit(X_train, y_train)
 
 # 5. Make Predictions
 print("\nMaking predictions...")
-y_pred = pipeline.predict(X_test)
-y_pred_proba = pipeline.predict_proba(X_test)
+y_pred = model.predict(X_test)
+y_pred_proba = model.predict_proba(X_test)
 
 # 6. Evaluate Model
 print("\n--- Model Evaluation ---")
@@ -88,16 +88,16 @@ print(f"F1-Score (Macro): {f1_macro:.4f}")
 print("\n--- Classification Report ---")
 print(classification_report(y_test, y_pred, target_names=wine.target_names))
 
-# 7. Save Pipeline
-pipeline_path = "wine_classification_pipeline.pkl"
+# 7. Save model
+model_path = "./model/wine_classification_model.pkl"
 
-print(f"\nSaving pipeline to {pipeline_path}...")
-joblib.dump(pipeline, pipeline_path)
-print("Pipeline saved successfully!")
+print(f"\nSaving model to {model_path}...")
+joblib.dump(model, model_path)
+print("model saved successfully!")
 
 # 8. Feature Importance
 print("\n--- Feature Importance ---")
-rf_model = pipeline.named_steps['randomforestclassifier']
+rf_model = model.named_steps['randomforestclassifier']
 feature_importance = pd.DataFrame({
     'feature': X.columns,
     'importance': rf_model.feature_importances_
@@ -124,4 +124,4 @@ plt.tight_layout()
 plt.savefig('./static/confusion_matrix.png', dpi=300, bbox_inches='tight')
 print("Confusion matrix plot saved as 'confusion_matrix.png'")
 
-print("\n--- Pipeline Complete ---")
+print("\n--- model Complete ---")
