@@ -24,15 +24,15 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # =====================
-# LOAD PIPELINE
+# LOAD MODEL
 # =====================
-PIPELINE_PATH = './model/wine_classification_pipeline.pkl'
+MODEL_PATH = './model/wine_classification_model.pkl'
 
 try:
-    pipeline = joblib.load(PIPELINE_PATH)
-    print(f"Pipeline loaded successfully from {PIPELINE_PATH}")
+    model = joblib.load(MODEL_PATH)
+    print(f"model loaded successfully from {MODEL_PATH}")
 except FileNotFoundError:
-    print(f"Error: Pipeline not found at {PIPELINE_PATH}. Please run train_model.py first.")
+    print(f"Error: model not found at {MODEL_PATH}. Please run train_model.py first.")
     raise
 
 # Load wine dataset for target names and feature information
@@ -81,10 +81,6 @@ if not os.path.exists(class_dist_path):
 # =====================
 # ROUTES
 # =====================
-@app.get("")
-async def redirect_root():
-    return RedirectResponse(url="/")
-
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse(
@@ -129,10 +125,10 @@ async def predict(request: Request):
         )
 
     try:
-        # Use the pipeline for prediction (handles scaling automatically)
+        # Use the model for prediction (handles scaling automatically)
         input_array = np.array(input_data).reshape(1, -1)
-        prediction = pipeline.predict(input_array)[0]
-        prediction_proba = pipeline.predict_proba(input_array)[0]
+        prediction = model.predict(input_array)[0]
+        prediction_proba = model.predict_proba(input_array)[0]
         confidence = float(max(prediction_proba)) * 100
         cultivar = TARGET_NAMES[prediction]
     except Exception as e:
