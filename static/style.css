@@ -129,30 +129,7 @@ button:active {
     transform: translateY(0);
 }
 
-/* EDA images section */
-.eda-section {
-    margin-top: 50px;
-    text-align: center;
-}
 
-.eda-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-    margin-top: 20px;
-}
-
-.eda-grid img {
-    width: 100%;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-md);
-    transition: var(--transition);
-}
-
-.eda-grid img:hover {
-    transform: scale(1.02);
-    box-shadow: var(--shadow-lg);
-}
 
 /* Prediction result styling */
 .result {
